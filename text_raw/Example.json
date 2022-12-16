@@ -1,0 +1,249 @@
+{
+  "project_id": "E1936",
+  "unique_id": "E1936",
+  "data": {
+    "id": "0",
+    "title": "E1936 Specialized Rubrics",
+    "text": null,
+    "children": [
+      {
+        "id": "1",
+        "title": "Introduction",
+        "text": "This Wiki page is created per CSC/ECE 517: \"Object-Oriented Design and Development\", Expertiza Project requirements (Spring, 2019). Our <link> was assigned the project \" <link> \". This is an Expertiza project. In this wiki page we describe the problem to be solved, how we solve that problem, and how we test our solution. We also provide helpful links and contact information for our team.",
+        "children": null
+      },
+      {
+        "id": "2",
+        "title": "Project Description",
+        "text": "In this section, we discuss the problem we need to solve, the Expertiza feature this problem is related to, what needs to be done to solve the problem (at a high level), and the previous attempt to solve this problem.",
+        "children": [
+          {
+            "id": "2.1",
+            "title": "Problem Statement",
+            "text": "This problem statement summarizes the problem as described in the project description \" <link> \". In CSC/ECE 517, there are several types of topics that could be covered in a single class assignment. 1. Code base 1.1. Expertiza 1.2. Mozilla 1.3. etc. 2. Goal 1.1. Refactoring 1.2. Testing 1.3. etc. However, currently we can only specify one kind of rubric for an assignment. This means that teams working on different topics will be evaluated using the same rubric. With this setup, it's not possible to fine-tune rubrics for different topics - rubrics tend to be overly general.",
+            "children": null
+          },
+          {
+            "id": "2.2",
+            "title": "Feature Description",
+            "text": "The Expertiza project already has a feature that allows rubrics to vary by project phase or \"round\". The feature we will add in this project is a feature to allow rubrics to vary not only by round, but also by topic. This allows more flexibility to the instructor when setting up an assignment, so that they can use rubrics better suited to the tasks that students are performing in an assignment. When this feature is complete, the following scenarios will be possible, and the instructor will be the judge of which scenario is the best fit to the assignment: 1. Rubric does not vary by round or by topic. 2. Rubric varies by round, but not by topic. 3. Rubric varies by topic, but not by round. 4. Rubric varies by both round and topic.",
+            "children": null
+          },
+          {
+            "id": "2.3",
+            "title": "What Needs to be Done",
+            "text": "This section summarizes the work as described in the project description \" <link> \". 1. In assignment#edit page \"Rubrics\" tab, add a checkbox to specify whether rubric should vary by topic. 2. In assignment#edit page \"Topics\" tab, add dropdown(s) next to each topic to specify which rubric(s) are associated with the topic. 1.1. The dropdown(s) should appear only if rubric should vary by topic, per the Rubrics tab. 1.2. The topic should have a multiple dropdowns (one for each round) only if rubrics vary by round, per the Rubrics tab. 1.3. By default, the rubric(s) for each course project will be the one(s) specified in \u201cRubrics\u201d tab. 1.4. The dropdown value can overwrite the default rubric. 3. Be careful when making changes to the code 1.1. The signup_sheet_controller should have as little to do as possible with the selection of rubrics. 1.2. Anything not germane to selecting topics should be in another controller or (more probably) a helper. 4. Create a DB migration to allow rubric to vary by topic as well as by round.",
+            "children": [
+              {
+                "id": "2.3.1",
+                "title": "Screenshots",
+                "text": "Before: (Rubrics tab for an Assignment) <image> Before: (Topics tab for an Assignment) <image> After: (Rubrics tab for an Assignment) <image> After: (Topics tab for an Assignment) <image>",
+                "children": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "title": "Previous Work",
+        "text": "There was previous attempt to implement this project in the Fall of 2018 semester by different team, but it was rejected due to several reasons. As a result our team was assigned to complete this project with the given implementation. However, after detailed investigation of the proposed design that team has made in the previous semester and review of the code changes, we proposed different architectural solution for the problem, which we believe is simpler, more efficient, and elegant solution.",
+        "children": [
+          {
+            "id": "3.1",
+            "title": "Previous Project Implementation",
+            "text": "Our team was provided with all relevant information and materials about the design and implementation of the previously attempted project. We would like to acknowledge that we use previous implementation and design as reference and our starting point for our own implementation. The following is the list of links with the relevant materials that we have used for better project understanding, determining pros and cons of previously proposed changes, and establishing our design strategy and implementation: 1. <link> 2. <link> 3. <link> After reviewing all relevant materials above, we concluded that the project implementation was incomplete and proposed design had significant flaw. We identified main drawbacks and flaw as follows: 1. Establishing incorrect many-to-one relationship between sign_up_topics and questionnaires tables: 1.1. Creating a DB migration to add questionnaire_id in the sign_up_topics table to store the dropdown data presumes one-to-one or many-to-one relationship between sign_up_topics and questionnaires tables 1.2. Correct relationship between sign_up_topics and questionnaires tables is many-to-many . For example, each project topic may have various rubrics depending on the round it is used (e.g., for round 1, topic may have one rubric; but for round 2, the same topic may have different rubric) 1.3. Proposed previous migration changes would break DB design and would not allow to store correctly topic and its associated rubric per different round. 2. Per project requirement specifications, \" The dropdown box should appear only if 'Vary rubric by topic' is selected in the Rubrics tab. \" This requirement was not met and Vary rubric by topic checkbox in the Rubrics tab was not implemented. Therefore, dropdown box with the list of rubrics appears regardless of whether \" Vary rubric by topic \" is selected or not. 3. The dropdown box includes the list of all possible rubrics including default value. However, this condition can be improved. The dropdown box should list the rubrics that were created by the current user (professor who is logged in). This would allow to shorten the list of possible rubrics dramatically and help to avoid any misunderstanding and confusion while user selects desired rubric for the course project. We found no further issues with the rest implementation and in other project materials. Wiki page is very useful for understanding design of proposed changes, finding drawbacks and the flaw. Considering all the pros and cons, and taking into account drawbacks of the proposed changes, our team evolved different approach that should successfully solve the problem stated for the project without without creating additional issues. Please see our <link> for more details.",
+            "children": null
+          },
+          {
+            "id": "3.2",
+            "title": "Previous Project Requirements",
+            "text": "The project requirements originally specified how to alter the databases to support varying rubrics by topic. Create a new table named topic_questionnaires with field: 1. id 2. topic_id 3. questionnaire_id 4. used_in_round However, the E1936 team successfully petitioned for this requirement to change to give us more freedom in the implementation. The original suggestion had a flaw. There is already an existing table in the Expertiza project called assignment_questionnaires , which has columns including assignment_id , questionnaire_id , and used_in_round . It is this table that maintains the knowledge of which rubric is used in which round of an assignment. If we were to add a new table to maintains the knowledge of which rubric is used in which topic of an assignment as originally suggested, then we would have a big problem. Knowledge of round-rubric relationship is duplicated. This would lead (best case scenario) to extra work, and (worst case scenario) to lots of bugs caused by inconsistencies in how these tables are handled with CRUD operations throughout the code. In other words, this is not a DRY solution.",
+            "children": null
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "title": "Project Implementation",
+        "text": "In this section, we propose our solution to the problem with the set of UML diagrams, discuss implementation techniques and details, and list the goals we achieved. We start by proposing our solution to the problem utilizing UML diagrams that include Use case, Entity Relationship, Class, and Sequence diagrams! Further, we discuss design strategy by breaking project problem into multiple staged sub-problems and provide solutions for each of these sub-problems. We also discuss some design strategies in the form of problem - solution, and provide the list of involved files. To illustrate implementation details for different tasks we decided to include selected (only) modified code where pseudocode-like solution is provided for each major task in this project. Finally, since we received some common questions and misunderstanding during first peer review period, we include Q/A section, where we provide an answer to each common question and concern we received.",
+        "children": [
+          {
+            "id": "4.1",
+            "title": "UML Diagrams",
+            "text": "Our solution and implementation of the project can be easily shown by discussing Use Case, Entity Relationship, and Class diagrams. First, for simplicity we discuss in general possible sequence of interactions between a user (in this case instructor) and the system (Expertiza) via presenting Use Case Diagram. Then we plan to show proposed database modification via Entity Relationship Diagram. At this point the high-level design and proposed changes should be clear. To make our design more concrete and dive into implementation level, we decided to provide UML Class diagram. Finally, to demonstrate our achievements, we complete this section with the UML Sequence diagram to illustrate interactive behavior of a system with utilized specialized rubrics feature.",
+            "children": [
+              {
+                "id": "4.1.1",
+                "title": "Use Case Diagram",
+                "text": "<image> The above Use Case Diagram shows general sequence of interactions between an instructor and the system (Expertiza) that defines where and how the feature can be utilized. Note that highlighted use cases are objects of our interest and work. Also please note that all of the shown use cases already exist in the system and we simply added a new feature into the system with existing use cases. Particularly, the rubric for each assignment and newly added Review rubric varies by topic checkbox with which instructor may choose to vary assignment by topic or not, by checking and unchecking the checkbox is displayed in the Rubrics tab. Hence, we show how instructor can get to the Rubrics tab of the assignments. Similarly, Topics tab of assignments has additional Questionnaires column for each topic, where instructor may specify which rubric associates with which topic. To perform this sequence of interactions and utilize the new feature, instructor must choose Edit any assignment from the list of all assignments displayed to him/her in the Manage Assignments page, which can be navigated by instructor by selecting it from the header of the system.",
+                "children": null
+              },
+              {
+                "id": "4.1.2",
+                "title": "Entity Relationship Diagram",
+                "text": "<image> The sections of the diagram highlighted in yellow show newly introduced items. That is, we are adding a new column called topic_id to assignment_questionnaires , in order to link assignment_questionnaires to sign_up_topics . Any assignment, topic, or questionnaire may be represented by multiple records within assignment_questionnaires , but each record within assignment_questionnaires refers to just one assignment, topic, or questionnaire. It is the ability to have an assignment represented by multiple records, and the new relationship to sign_up_topics , that allows us to support all of the required scenarios: 1. Rubric does not vary by round or by topic. 2. Rubric varies by round, but not by topic. 3. Rubric varies by topic, but not by round. 4. Rubric varies by both round and topic. <image> This table illustrates the possibilities that the system may have. 1. Assignment 1 does not vary by round or by topic. 2. Assignment 2 varies by round, but not by topic. 3. Assignment 3 varies by topic, but not by round. 4. Assignment 4 varies by both round and topic. This change is done via database migration by running the following commands: <code> Above command adds the topic_id column to the AssignmentQuestionnaires table and generates new migration file: <image> To see the details of the entire database change please check this <link> .",
+                "children": null
+              },
+              {
+                "id": "4.1.3",
+                "title": "Class Diagram",
+                "text": "<image> The above UML Class diagram describes the changes our team made in the Ruby classes, methods and attributes. Please note that all provided classes in the diagram had already existed in the system, and we only added new relationship, modified existing methods (and some method signatures) and utilized given attributes. All of the class's attributes and methods that are shown in the diagram are utilized (directly and indirectly) in our current implementation. Some of the methods and attributes provided within the classes in the diagram are newly developed. There is only one newly added aggregation relationship between the SingUpTopic class and AssignmentQuestionnaire class. Moreover, controllers and models for the certain classes were combined into a single class for simplicity to the design description. In reality, half of the methods shown in the Assignment class are implemented in the app/controllers/assignments_controller.rb file and other half is in the app/models/assignment.rb file. We decided to combine all of the functionalities of each relevant controller and model class into single class for the ease of design presentation and interpretation. We used Sequence diagram below to illustrate how MVC architectural pattern is used for a given classes.",
+                "children": null
+              },
+              {
+                "id": "4.1.4",
+                "title": "Sequence Diagram",
+                "text": "Below we provide UML Sequence diagram to illustrate the interactive behavior of a system utilizing the specialized rubric feature that we implemented. Note that the following UML Sequence Diagram still is considered to be a high-level diagram and it displays the behavior of the system that we observed while debugging and implementing our code. By presenting the following sequence diagram, we do not make a claim that this is how Expertiza works, we simply documented our observations and want to share it with the teaching staff and fellow students. It is possible that we could have missed something or incorrectly interpreted the source code, but this diagram is the best of our knowledge. We hope that this would be useful for the teams working on similar projects in the future! <image>",
+                "children": null
+              }
+            ]
+          },
+          {
+            "id": "4.2",
+            "title": "Design Strategy",
+            "text": "As we have concrete understanding of the problem and proposed solution, we would like break this problem into multiple more manageable sub-problems with specific tasks and well-defined solutions to these tasks. Generally, each sub-problem requires modification of one or more files. We would like to propose our Design Strategy as follows:",
+            "children": [
+              {
+                "id": "4.2.1",
+                "title": "Preparation",
+                "text": "1. Clean up code that our implementation will use 1.1. PROBLEM: We need to add/change content to the edit assignment Topics tab, but unlike other tabs in the views, it does not have its own partial view to work with 1.1.1. SOLUTION: Refactor and move the code dealing with topics into separate app/views/assignments/edit/_topics.html.erb file 1.1.2. File: app/views/assignments/edit.html.erb 1.2. PROBLEM: In a section below, we discuss the need to modify existing methods to also accept an optional argument topic_id . In many cases these existing method use confusing variable names or lack sufficient comments. 1.1.1. SOLUTION: Clean up methods that we plan to modify 1.1.2. FILE: (many)",
+                "children": null
+              },
+              {
+                "id": "4.2.2",
+                "title": "Implementation",
+                "text": "1. Allow an instructor to indicate that rubric should vary by topic 1.1. PROBLEM: There is no way for an instructor to indicate that an assignments' rubric should vary by topic 1.1.1. SOLUTION: Add a new checkbox in the edit assignment Rubrics tab to indicate this preference 1.1.2. FILE: app/views/assignments/edit/_rubrics.html.erb 1.2. PROBLEM: If the user changes the \"Review rubric varies by round?\" or \"Review rubric varies by topic?\" checkbox on the Rubrics tab, but leaves the page in an inappropriate state before leaving the tab (e.g. rubric weights that do not add up to 0% or 100%), then the user does not get feedback that they made a mistake. They only get such feedback when explicitly performing a \"Save\". Switching from tab to tab on the assignments edit page attempts to perform an implicit save, but there is no mechanism to update the flash messages onscreen if anything goes wrong. This becomes more problematic now that the Topics tab appearance depends on choices made on the Rubrics tab. 1.1.1. SOLUTION: Provide a route to an assignments controller method that can return a render of the flash messages. Add an AJAX call on the assignments edit view that can update the flash messages onscreen. 1.1.2. FILE: app/controllers/assignments_controller.rb 1.1.3. FILE: app/views/assignments/edit.html.erb 1. Allow an instructor to choose different rubrics for different topics 1.1. PROBLEM: There is no way for an instructor to choose different rubrics for different topics 1.1.1. SOLUTION: Add a new column in the edit assignment Topics tab for choosing rubric(s) 1.1.1.1. New column only visible if rubrics vary by topic, per Rubrics tab 1.1.1.2. New column has multiple rounds per topic only if rubrics vary by round, per Rubrics tab 1.1.1.3. Default value for any rubric is that rubric which is shown on Rubrics tab 1.1.1.4. Rubric(s) in the dropdown list is/are only those that were created by the currently logged in instructor 1.1.2. FILE: app/views/assignments/edit/_topics.html.erb 1.2. PROBLEM: The code in app/views/assignments/edit/_rubrics.html.erb includes dropdowns like the ones we need to add for topics, but that code is way too complex for its functionality (too heavy for a view, uses JavaScript) 1.1.1. SOLUTION: Use the code in app/views/assignments/edit/_rubrics.html.erb for inspiration only 1.1.1.1. Refactor and move as much actual work as possible out into helper methods that are simply called from this view 1.1.1.2. Views are not intended to do heavy lifting 1.1.1.3. Use as little JavaScript as possible, since this is a Ruby On Rails project, not a JS project 1.1.2. FILE: app/views/assignments/edit/_topics.html.erb 1.3. PROBLEM: The drop-downs for selecting rubrics should show only those rubrics created by the currently-logged in instructor (per project mentor). They currently include those created by the instructor of the relevant assignment. 1.1.1. SOLUTION: Change the filtering in the questionnaire_options method to reflect the desired filtering. 1.1.2. FILE: app/helpers/assignment_helper.rb 1. Support the ability of the database to link rubrics to topics 1.1. PROBLEM: There is no relationship in the database that can link together rubrics with topics 1.1.1. SOLUTION: Add a new migration that adds topic_id field to existing assignment_questionnaires table 1.1.1.1. This new field will reference the id field in the sign_up_topics table 1.1.2. FILE: db/migrate/[timestamp]_add_topic_id_to_assignment_questionnaires_table.rb 1.2. PROBLEM: The AssignmentQuestionnaire model does not have any knowledge of topics 1.1.1. SOLUTION: Add a new belongs_to reference in the model, to sign_up_topic 1.1.2. FILE: app/models/assignment_questionnaire.rb 1.3. PROBLEM: The SignUpTopic model does not have any knowledge of assignment_questionnaire records 1.1.1. SOLUTION: Add a new has_many reference in the model, to assignment_questionnaires 1.1.2. FILE: app/models/sign_up_topic.rb 1. React to an instructor saving an assignment after altering the rubrics-vary-by-topic checkbox 1.1. PROBLEM: There is nothing in place to remember when an instructor chooses to vary rubrics by topic, or chooses to not vary rubrics by topic 1.1.1. SOLUTION: Modify existing method update_assignment_questionnaires() . This method executes upon assignment save (explicit or via tab-change). This method deletes all AssignmentQuestionnaire records before creating new correct records reflecting the user's selections in the edit assignment form. Modify such that this method can create multiple records reflecting multiple topics, in the case where rubric should vary by topic. With this modification, the correct records (with default rubrics) are present when the user goes to the Topics tab, so that the Topics tab can display properly. 1.1.2. FILE: app\\models\\assignment_form.rb 1.2. PROBLEM: There is no way to refresh the Topics tab to show / hide drop-downs after the instructor changes checkbox on Rubrics tab 1.1.1. SOLUTION: Make use of existing \"Save\"-like functionality when changing tabs on the edit assignment page. When updating due to tab-change, cause a fresh render of the Topics tab. When updating due to \"Save\" button, keep functionality as-is. 1.1.2. FILE: app/controllers/assignments_controller.rb 1.1.3. FILE: app/views/assignments/edit.html.erb 1. Support the ability to find the correct rubric for a particular topic 1.1. PROBLEM: The existing methods allow us to find the correct rubric for a particular round, but not a particular topic 1.1.1. SOLUTION: Modify the existing method questionnaire(assignment, type, round_number) to also accept an optional argument topic_id 1.1.2. FILE: app/helpers/assignment_helper.rb 1.1.3. SOLUTION: Modify the existing method assignment_questionnaire(assignment, type, number) to also accept an optional argument topic_id 1.1.4. FILE: app/helpers/assignment_helper.rb 1.1.5. SOLUTION: Modify the existing method questionnaire(round = nil) to also accept an optional argument topic_id 1.1.6. FILE: app/models/review_response_map.rb 1.1.7. SOLUTION: Modify the existing method questionnaire(round) to also accept an optional argument topic_id 1.1.8. FILE: app/models/self_review_response_map.rb 1.1.9. SOLUTION: Modify the existing method review_questionnaire_id(round = nil) to also accept an optional argument topic_id 1.1.10. FILE: app/models/assignment.rb 1. Use the correct rubric for a particular topic 1.1. PROBLEM: When finding rubrics to display, save results from, calculate scores from, etc. round may be used but topic is not 1.1.1. SOLUTION: Examine all callers of methods modified in the previous section and pass in topic_id where appropriate to grab the correct rubric 1.1.2. FILE: (many) 1. Support the ability to determine if an assignment has rubrics that vary by topic 1.1. PROBLEM: There is no handy method to call that can tell us if an assignment has rubrics that vary by topic 1.1.1. SOLUTION: Add a new method varying_rubrics_by_topic? based on the existing method varying_rubrics_by_round? 1.1.2. FILE: app/models/assignment.rb",
+                "children": null
+              }
+            ]
+          },
+          {
+            "id": "4.3",
+            "title": "Q&A",
+            "text": "Here we paraphrase some questions we received during round 1 of the documentation review. 1. Q: How will the new logic for varying rubric by topic tie in with the existing logic? 1.1. A: We will add a new field topic_id into the existing table assignment_questionnaires , as noted in the <link> . We will update methods that find questionnaires to allow these methods to also accept a topic_id argument, as noted in <link> . 2. Q: How will the \"Rubric varies by topic\" selection be stored? 1.1. A: Indirectly, by saving records in the assignment_questionnaires table which either reference a topic_id or leave this field nil. For more details please see the <link> discussion. 3. Q: What will happen if an instructor selects \"Rubric varies by topic\", makes selections on the \"Topics\" tab, and then deselects \"Rubric varies by topic\"? 1.1. A: The Topics tab, when next visited, will no longer show dropdowns for selecting rubrics by topic. When the assignment is saved, the appropriate not-varying-by-topic records will be saved in the assignment_questionnaires table. For more details please see <link> . 4. Q: What will happen after an instructor selects \"Rubric varies by topic\"? 1.1. A: The Topics tab, when next visited, will now show dropdowns for selecting rubrics by topic. These rubrics will default to those shown on the Rubrics tab. When the assignment is saved, the appropriate varying-by-topic records will be saved in the assignment_questionnaires table. For more details please see <link> . 5. Q: How will the appropriate list of questionnaires for the new dropdowns on the Topics tab be determined? 1.1. A: In the same way that the appropriate list of questionnaires for the existing dropdowns on the Rubrics tab is determined. Namely, by the questionnaire_options method in the file expertiza/app/helpers/assignment_helper.rb .",
+            "children": null
+          },
+          {
+            "id": "4.4",
+            "title": "(Selected) Modified Code",
+            "text": "In this section, we provide selected portions of modified code to illustrate how we implemented the new feature. Allow an instructor to indicate that rubric should vary by topic app\\views\\assignments\\edit\\_rubrics.html.erb <code> Allow an instructor to choose different rubrics for different topics app\\views\\sign_up_sheet\\_table_line.html.erb <code> Support the ability of the database to link rubrics to topics app\\models\\sign_up_topic.rb <code> React to an instructor saving an assignment after altering the rubrics-vary-by-topic checkbox app/controllers/assignments_controller.rb <code> Support the ability to find the correct rubric for a particular topic app/helpers/assignment_helper.rb <code> Use the correct rubric for a particular topic app\\controllers\\response_controller.rb <code> Support the ability to determine if an assignment has rubrics that vary by topic app\\models\\assignment.rb <code>",
+            "children": null
+          }
+        ]
+      },
+      {
+        "id": "5",
+        "title": "How To",
+        "text": "In this section, we describe how to use the newly implemented feature. (Log in as an Instructor)",
+        "children": [
+          {
+            "id": "5.1",
+            "title": "Specify Rubrics should vary by Topic",
+            "text": "1. Navigate to Edit page for an Assignment. 2. Click the Rubrics tab. 3. Check the \"Review rubric varies by topic?\" checkbox.",
+            "children": null
+          },
+          {
+            "id": "5.2",
+            "title": "Select a Rubric for a Topic",
+            "text": "After checking the \"Review rubric varies by topic?\" checkbox, 1. Click the Topics tab. 2. Select the appropriate Rubric from the dropdown menu(s) beside each Topic. See also: <link>",
+            "children": null
+          }
+        ]
+      },
+      {
+        "id": "6",
+        "title": "Project Testing",
+        "text": "",
+        "children": [
+          {
+            "id": "6.1",
+            "title": "Strategy",
+            "text": "To test code implementation, correctness of the added feature, verify that the team did not break any existing functionalities in the Expertiza, and ensure that no bugs were introduced in the code, we developed the following Test Strategy: 1. Code inspection 2. Run and pass existing RSpec Tests 3. Develop New RSpec Tests 4. Run through live UI to test a feature using Expertiza instance",
+            "children": null
+          },
+          {
+            "id": "6.2",
+            "title": "Rspec Testing",
+            "text": "",
+            "children": [
+              {
+                "id": "6.2.1",
+                "title": "Existing Tests",
+                "text": "Run all existing RSpec tests on any changed files, after our changes, to ensure that we have not introduced any failures. The commands and results are shown below. <code> The features tests were extremely time-consuming so we did not routinely run them during development. However TravisCI results on our <link> demonstrate the passing status of all tests.",
+                "children": null
+              },
+              {
+                "id": "6.2.2",
+                "title": "New Tests",
+                "text": "Write comprehensive RSpec tests, for all new or modified methods. 1. FILE: spec/helpers/assignment_helper_spec.rb 1.1. METHODS TO TEST: 1.1.1. questionnaire(assignment, type, round_number, topic_id) 1.1.2. assignment_questionnaire(assignment, type, number, topic_id) 2. FILE: spec/models/review_response_map_spec.rb 1.1. 1.1.1. METHODS TO TEST: 1.1.1.1. questionnaire(round, topic_id) 3. FILE: spec/models/self_review_response_map_spec.rb 1.1. 1.1.1. METHODS TO TEST: 1.1.1.1. questionnaire(round, topic_id) 4. FILE: spec/models/assignment_spec.rb 1.1. 1.1.1. METHODS TO TEST: 1.1.1.1. review_questionnaire_id(round, topic_id) 1.1.1.2. varying_rubrics_by_topic?() Run these tests, to ensure that the new code works as intended. The commands and results are shown below. <code> The test suite for a single new method is shown below. 1. There are many such suites added in expertiza/spec 2. This example illustrates our general strategy: 1.1. test missing input 1.2. test bad input 1.3. test various acceptable forms of input 1.4. test scenarios that lead to various return values <code>",
+                "children": null
+              }
+            ]
+          },
+          {
+            "id": "6.3",
+            "title": "UI Testing",
+            "text": "Here we describe manual UI Testing that was performed.",
+            "children": [
+              {
+                "id": "6.3.1",
+                "title": "Rubric does not vary by round or by topic",
+                "text": "1. Go to Rubrics tab and verify that both \"Review rubric varies by round?\" and \"Review rubric varies by topic?\" checkboxes are unchecked. 2. Go to Topics tab and verify that there are no dropdown menus beside each Topic.",
+                "children": null
+              },
+              {
+                "id": "6.3.2",
+                "title": "Rubric varies by round, but not by topic",
+                "text": "1. Go to Rubrics tab and verify that \"Review rubric varies by round?\" is checked and \"Review rubric varies by topic?\" is unchecked. 2. Go to Topics tab and verify that there are no dropdown menus beside each Topic.",
+                "children": null
+              },
+              {
+                "id": "6.3.3",
+                "title": "Rubric varies by topic, but not by round",
+                "text": "1. Go to Rubrics tab and verify that \"Review rubric varies by round?\" is unchecked and \"Review rubric varies by topic?\" is checked. 2. Go to Topics tab and verify that there is only 1 dropdown menu beside each Topic.",
+                "children": null
+              },
+              {
+                "id": "6.3.4",
+                "title": "Rubric varies by both round and topic",
+                "text": "1. Go to Rubrics tab and verify that both \"Review rubric varies by round?\" and \"Review rubric varies by topic?\" checkboxes are checked. 2. Go to Topics tab and verify that there is 1 dropdown menu per round for each Topic.",
+                "children": null
+              },
+              {
+                "id": "6.3.5",
+                "title": "Updates rejected if Rubric weights do not add up to 100% or 0%",
+                "text": "1. Go to Rubrics tab and check the \"Review rubric varies by topic?\" checkbox. 2. Change weight values for the Rubrics so that they add up to 97%. 3. Go to Topics tab and verify that checking the \"Review rubric varies by topic?\" checkbox did not work. 4. Verify that there are no dropdown menus beside each Topic. 5. Verify that the proper error message is shown.",
+                "children": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "7",
+        "title": "Conclusion",
+        "text": "In CSC/ECE 517, there are several types of topics that could be covered in a single class assignment. However, currently we can only specify one kind of rubric for an assignment. This means that teams working on different topics will be evaluated using the same rubric. With this setup, it's not possible to fine-tune rubrics for different topics - rubrics tend to be overly general. In this project, we have solved this issue, by allowing rubrics to vary not only by round, but also by topic. This allows more flexibility to the instructor when setting up an assignment, so that they can use rubrics better suited to the tasks that students are performing in an assignment. The following scenarios will be possible, and the instructor will be the judge of which scenario is the best fit to the assignment: 1. Rubric does not vary by round or by topic. 2. Rubric varies by round, but not by topic. 3. Rubric varies by topic, but not by round. 4. Rubric varies by both round and topic. The instructor may use the Rubrics tab of the assignments edit page to make changes to the \"Review rubric varies by round?\" and \"Review rubric varies by topic?\" checkboxes. The instructor may then use the Topics tab to select the appropriate rubric(s) for every topic in the assignment. Various other Expertiza code has been updated to retrieve the correct rubric depending on round and topic after the instructor has made these selections.",
+        "children": null
+      },
+      {
+        "id": "8",
+        "title": "Future Work",
+        "text": "This section discusses possible future work for another CSC 517 team to take on. Such a team can search the Expertiza codebase for \"TODO E1936 (future work)\" to find most of the places in the code that the notes below refer to. 1. Reduce the delay between changing the state of the \"Review rubric varies by topic?\" checkbox on the Rubrics tab, and the show / hide of rubric drop-downs on the Topics tab. 2. Redesign UI for tone analysis, heatmaps, and review scores pop-up. These areas are designed around the assumption that reviews do NOT vary by topic. For example, in the review scores pop-up, a reviewer can see the reviews they have given, arranged by question, across multiple reviewees. 3. Consider whether the questionnaire options available for selection in drop-downs on the Topics and Rubrics tabs should include only those questionnaires created by the currently-logged-in instructor. Our work in this project changed the filtering from instructor-owning-assignment to currently-logged-in instructor - but left in place all non-private questionnaires. Consider whether non-private questionnaires should be excluded. This may result in some drop-downs not having any available questionnaires.",
+        "children": null
+      },
+      {
+        "id": "9",
+        "title": "Useful Links",
+        "text": "In this section we provide useful links related to the work that has been completed by our team. 1. <link> 2. <link> 3. <link>",
+        "children": null
+      },
+      {
+        "id": "11",
+        "title": "References",
+        "text": "1. Expertiza Web <link> 2. Expertiza on GitHub <link> 3. Expertiza Wiki <link> 4. Rspec Documentation <link> 5. Wiki with Previous Work <link> 6. Pull Request of the Previous Work <link>",
+        "children": null
+      }
+    ]
+  }
+}
